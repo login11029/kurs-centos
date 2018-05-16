@@ -1,2 +1,42 @@
-sad
-lkhio
+if [ -f date.ping ]
+then
+ old=( $(cat date.ping) )
+else
+ for (( i=0; i<255; i++ ))
+  do
+   old[$i]=0
+  done 
+fi
+
+for (( i=0; i<255; i++ ))
+do
+ new[$i]=0
+done 
+
+> date.ping
+
+net="10.7.180."
+
+for (( i=100; i<102; i++ ))
+do
+ip=$net$i
+ping -c1 $ip &>>/dev/null && new[$i]=+ || new[$i]=-
+done
+
+
+for (( i=100; i<102; i++ ))
+do
+if [ ${old[$i]} != ${new[$i]} ]
+then
+echo $net$i" "${new[$i]} | mail -s "ping" login11029@gmail.com
+fi
+done 
+
+
+for(( i=0; i<255; i++ ))
+do
+echo ${new[i]}
+done >> date.ping
+
+
+
